@@ -1,0 +1,446 @@
+{
+  "cards": {
+    "Sol Ring": { "abilities": [], "scope": "none", "affects": "none" },
+    "Darksteel Ingot": { "abilities": [], "scope": "none", "affects": "none" },
+    "Iroas, God of Victory": {
+      "abilities": ["menace", "prevent all damage that would be dealt to attacking creatures you control"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Sublime Archangel": {
+      "abilities": ["exalted"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Levitation": {
+      "abilities": ["flying"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "All-Out Assault": {
+      "abilities": ["haste"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Rhythm of the Wild": {
+      "abilities": ["riot", "creature spells you control can't be countered"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Intimidation": {
+      "abilities": ["fear"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Uncivil Unrest": {
+      "abilities": ["riot"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Warrior's Resolve": {
+      "abilities": ["+1/+0"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Rage Reflection": {
+      "abilities": ["double strike"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Archetype of Imagination": {
+      "abilities": ["flying"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Spidersilk Armor": {
+      "abilities": ["reach"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Temur Ascendancy": {
+      "abilities": ["haste"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Whip of Erebos": {
+      "abilities": ["lifelink"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Aang, Air Nomad": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Cayth, Famed Mechanist": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Pariah's Shield": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Adriana, Captain of the Guard": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Eirdu, Carrier of Dawn": {
+      "abilities": ["vigilance"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Sun Quan, Lord of Wu": {
+      "abilities": ["horsemanship"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Narset, Enlightened Exile": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Surrak and Goreclaw": {
+      "abilities": ["trample"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Mishra, Tamer of Mak Fawa": {
+      "abilities": ["menace"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Replicating Ring": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Avacyn, Angel of Hope": {
+      "abilities": ["indestructible"],
+      "scope": "all",
+      "affects": "permanents"
+    },
+    "The Walls of Ba Sing Se": {
+      "abilities": ["indestructible."],
+      "scope": "all_except_self",
+      "affects": "permanents"
+    },
+    "Marchesa, the Black Rose": {
+      "abilities": ["dethrone"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Hexing Squelcher": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Urabrask the Hidden": {
+      "abilities": ["haste"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Quicksilver Amulet": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "The Immortal Sun": {
+      "abilities": ["+1/+1", "spells cost {1} less"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Astral Cornucopia": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Chromatic Lantern": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Hornet Nest": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Chimil, the Inner Sun": {
+      "abilities": ["spells you control can't be countered"],
+      "scope": "all",
+      "affects": "spells"
+    },
+    "Archetype of Finality": {
+      "abilities": ["deathtouch"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Brave the Sands": {
+      "abilities": ["vigilance", "can block an additional creature"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Inga and Esika": {
+      "abilities": ["vigilance"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Archetype of Endurance": {
+      "abilities": ["hexproof"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Knighthood": {
+      "abilities": ["first strike"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Shalai, Voice of Plenty": {
+      "abilities": ["hexproof", "you have hexproof"],
+      "scope": "all_except_self",
+      "affects": "creatures"
+    },
+    "Cryptolith Rite": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Enduring Vitality": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Legion Loyalty": {
+      "abilities": ["myriad"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Archetype of Courage": {
+      "abilities": ["first strike"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Giant Ankheg": {
+      "abilities": ["trample"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Sigarda, Font of Blessings": {
+      "abilities": ["hexproof", "you can't be forced to sacrifice permanents"],
+      "scope": "all_except_self",
+      "affects": "creatures"
+    },
+    "Mithril Coat": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "True Conviction": {
+      "abilities": ["double strike", "lifelink"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Imoti, Celebrant of Bounty": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Behind the Scenes": {
+      "abilities": ["skulk"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Zagras, Thief of Heartbeats": {
+      "abilities": ["deathtouch"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Garruk's Uprising": {
+      "abilities": ["trample"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Always Watching": {
+      "abilities": ["vigilance"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Assemble the Entmoot": {
+      "abilities": ["reach", "vigilance"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Massacre Girl, Known Killer": {
+      "abilities": ["menace"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Nahiri's Resolve": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Sigarda, Host of Herons": {
+      "abilities": ["you can't be forced to sacrifice permanents"],
+      "scope": "all",
+      "affects": "permanents"
+    },
+    "Goblin War Drums": {
+      "abilities": ["menace"],
+      "scope": "all",
+      "affects": "creatures"
+    },
+    "Maelstrom Nexus": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Averna, the Chaos Bloom": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Castle Vantress": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Fabled Passage": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Castle Ardenvale": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Indatha Triome": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Sandsteppe Citadel": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Watery Grave": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Forest": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Temple Garden": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Hallowed Fountain": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Overgrown Tomb": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Breeding Pool": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Opulent Palace": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "The World Tree": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Zagoth Triome": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Plains": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Island": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Swamp": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Godless Shrine": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Cascading Cataracts": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Mountain": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Command Tower": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Yavimaya, Cradle of Growth": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Homeward Path": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Urborg": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Reflecting Pool": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Exotic Orchard": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Bojuka Bog": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    },
+    "Esika, God of the Tree": {
+      "abilities": [],
+      "scope": "none",
+      "affects": "none"
+    }
+  }
+}

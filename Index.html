@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Commander Tracker - The Prismatic Terror</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050202;
+            --panel-bg: #120505;
+            --border-glow: #8a0b0b;
+            --text-main: #d4b8b8;
+            --text-muted: #7a5c5c;
+            --accent: #d90f0f;
+            --accent-dark: #630505;
+            --life-color: #ff3333;
+            --gold: #d4a373;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Roboto Mono', monospace;
+            background-image: radial-gradient(circle at center, #1a0808 0%, #000000 100%);
+            min-height: 100vh;
+            padding: 8px;
+            padding-bottom: 70px;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Cinzel Decorative', serif;
+            color: var(--accent);
+            text-align: center;
+            text-shadow: 0 0 10px rgba(217, 15, 15, 0.5);
+            margin-bottom: 8px;
+        }
+        h1 { font-size: 1.2rem; }
+        h2 { font-size: 0.9rem; border-bottom: 1px solid var(--accent-dark); padding-bottom: 4px; margin-bottom: 10px; }
+        h3 { font-size: 0.8rem; border-bottom: 1px solid var(--accent-dark); padding-bottom: 3px; margin-bottom: 6px; }
+
+        .container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--accent-dark);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: inset 0 0 15px rgba(138, 11, 11, 0.1);
+        }
+
+        button {
+            background: var(--accent-dark);
+            color: #fff;
+            border: 1px solid var(--accent);
+            padding: 6px 10px;
+            font-family: inherit;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+            min-height: 36px;
+            touch-action: manipulation;
+        }
+        button:active { transform: scale(0.94); background: var(--accent); }
+
+        input, select {
+            background: #000;
+            color: var(--text-main);
+            border: 1px solid var(--accent-dark);
+            padding: 6px;
+            font-family: inherit;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 0.8rem;
+            min-height: 34px;
+        }
+        input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 8px rgba(217, 15, 15, 0.5); }
+
+        .header-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
+        .reset-btn { background: transparent; border: 1px solid var(--accent); color: var(--accent); font-size: 0.7rem; padding: 4px 10px; min-height: 28px; }
+
+        /* GLOBAL EFFECTS */
+        .global-panel { border-color: var(--accent); box-shadow: 0 0 25px rgba(217, 15, 15, 0.6); background: #1a0505; }
+        .global-list { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+        .global-item {
+            background: rgba(217, 15, 15, 0.25);
+            border: 1px solid var(--accent);
+            padding: 6px 8px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 0 0 8px red;
+            font-size: 0.8rem;
+            animation: pulse-border 1.5s infinite;
+        }
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 5px rgba(217,15,15,0.3); }
+            50% { box-shadow: 0 0 20px rgba(217,15,15,0.8); }
+            100% { box-shadow: 0 0 5px rgba(217,15,15,0.3); }
+        }
+        .global-item .source { font-size: 0.6rem; color: #ffaaaa; margin-right: 6px; }
+        .global-item .remove-btn { cursor: pointer; color: #aaa; font-size: 1rem; padding: 0 4px; }
+
+        /* LIFE */
+        .compact-life { display: flex; align-items: center; justify-content: center; gap: 3px; flex-wrap: wrap; }
+        .compact-life button { font-size: 0.8rem; font-weight: bold; flex: 1; min-width: 30px; padding: 8px 0; min-height: 36px; }
+        .life-val { font-size: 2.8rem; font-weight: bold; color: var(--life-color); text-shadow: 0 0 15px rgba(255, 51, 51, 0.6); min-width: 50px; text-align: center; }
+
+        /* COMMANDER TRACKER */
+        .cmdr-track {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px;
+            justify-content: center;
+            background: #0a0303;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--accent-dark);
+        }
+        .cmdr-track .label { font-size: 0.65rem; color: var(--text-muted); }
+        .cmdr-track .count { font-size: 1.5rem; font-weight: bold; color: var(--accent); min-width: 30px; text-align: center; }
+        .cmdr-track .cost-box {
+            background: #000;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid #aa8800;
+            display: inline-block;
+            font-size: 0.8rem;
+            color: #ffcc88;
+        }
+        .cmdr-track .cost-box .tax { color: #ffaa00; font-weight: bold; }
+        .cmdr-track .cost-box .base-cost { font-size: 0.8rem; color: #ffcc88; }
+
+        /* COMMANDER DAMAGE */
+        .cmdr-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; background: rgba(0,0,0,0.3); padding: 4px 6px; border-radius: 5px; border-left: 2px solid var(--accent-dark); flex-wrap: wrap; }
+        .cmdr-row input { flex: 2; min-width: 70px; border: none; background: transparent; border-bottom: 1px solid var(--text-muted); border-radius: 0; padding: 2px; min-height: 24px; font-size: 0.7rem; }
+        .cmdr-val { font-size: 1.2rem; font-weight: bold; color: #ff6b6b; width: 26px; text-align: center; }
+        .btn-add-cmdr { width: 100%; border: 1px dashed var(--accent-dark); background: transparent; color: var(--text-muted); min-height: 32px; font-size: 0.75rem; }
+
+        /* ZONAS */
+        .zone-section {
+            margin-bottom: 10px;
+            border: 1px solid var(--accent-dark);
+            border-radius: 6px;
+            background: rgba(0,0,0,0.3);
+            padding: 6px;
+        }
+        .zone-section .zone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+        .zone-section .zone-header .zone-title {
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: var(--text-main);
+        }
+        .zone-section .zone-header .zone-count {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--accent);
+            background: #000;
+            padding: 0 6px;
+            border-radius: 4px;
+            border: 1px solid var(--accent-dark);
+        }
+        .zone-section .search-bar-zone {
+            margin-bottom: 4px;
+            font-size: 0.65rem;
+            min-height: 24px;
+            padding: 2px 6px;
+        }
+        .zone-section .zone-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .card-row {
+            display: flex;
+            flex-direction: column;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--text-muted);
+            border-radius: 4px;
+            transition: all 0.3s;
+            opacity: 0.9;
+            filter: none;
+        }
+        .card-row.campo { border-color: var(--accent); box-shadow: 0 0 8px rgba(217, 15, 15, 0.3); }
+        .card-row.cemiterio { border-color: #550000; background: rgba(30,0,0,0.5); }
+        .card-row.exilio { border-color: #333; background: rgba(20,20,20,0.5); filter: blur(0.3px); }
+        .card-row.deck { opacity: 0.4; filter: grayscale(80%); }
+        .card-row.command { border-color: var(--gold); background: rgba(212, 163, 115, 0.05); }
+
+        .card-header-ui {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 3px 5px;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .card-img-thumb {
+            width: 24px;
+            height: 24px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 3px;
+            flex-shrink: 0;
+            background-color: #222;
+            cursor: pointer;
+        }
+        .card-title-ui {
+            flex: 1;
+            font-weight: bold;
+            font-size: 0.7rem;
+            color: #fff;
+            min-width: 50px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .card-title-ui .zoom-icon {
+            font-size: 0.6rem;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+        .card-title-ui .zoom-icon:hover { opacity: 1; }
+
+        .card-controls {
+            display: none;
+            padding: 4px;
+            background: #110505;
+            border-top: 1px solid var(--accent-dark);
+        }
+        .card-row.campo .card-controls { display: block; }
+
+        .controls-actions { display: flex; gap: 3px; margin-bottom: 4px; flex-wrap: wrap; }
+        .controls-actions button { flex: 1; font-size: 0.6rem; padding: 2px 4px; min-height: 22px; }
+
+        .counter-inputs { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 4px; }
+        .counter-inputs input[type="text"] { flex: 3; min-width: 60px; font-size: 0.6rem; padding: 2px; min-height: 22px; }
+        .counter-inputs input[type="number"] { flex: 1; min-width: 40px; font-size: 0.6rem; padding: 2px; min-height: 22px; }
+        .counter-inputs button { flex: 1; min-width: 30px; font-size: 0.6rem; padding: 2px 4px; min-height: 22px; }
+
+        .counters-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+        .cnt-tag {
+            background: var(--accent-dark);
+            color: #fff;
+            font-size: 0.6rem;
+            padding: 2px 5px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex-wrap: wrap;
+        }
+        .cnt-tag .cnt-name { font-weight: bold; }
+        .cnt-tag .cnt-qty { background: #000; padding: 0 3px; border-radius: 4px; color: #ffaa00; }
+        .cnt-tag button { background: transparent; border: none; color: #fff; padding: 1px 2px; font-size: 0.6rem; min-height: 16px; cursor: pointer; min-width: 16px; }
+        .cnt-tag button:active { transform: scale(0.9); }
+        .btn-globalize { background: transparent; border: 1px solid #fff; padding: 1px 3px; border-radius: 2px; font-size: 0.45rem; margin-left: 2px; cursor: pointer; }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            position: relative;
+        }
+        .modal-content img {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(217,15,15,0.4);
+        }
+        .modal-close {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: var(--accent);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1.2rem;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        /* BOTÃO FLUTUANTE DE FASES */
+        .phase-fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 500;
+            background: var(--accent-dark);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(217, 15, 15, 0.6);
+            cursor: pointer;
+            transition: 0.2s;
+            touch-action: manipulation;
+            line-height: 1.2;
+            text-align: center;
+            font-weight: bold;
+        }
+        .phase-fab:active { transform: scale(0.9); }
+
+        /* PAINEL FLUTUANTE DE FASES */
+        .phase-drawer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 600;
+            background: #0a0303;
+            border-top: 2px solid var(--accent);
+            border-radius: 16px 16px 0 0;
+            padding: 12px 12px 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+            transform: translateY(105%);
+            transition: transform 0.3s ease;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+        }
+        .phase-drawer.open { transform: translateY(0); }
+        .phase-drawer .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .phase-drawer .drawer-header .title {
+            font-weight: bold;
+            color: var(--gold);
+            font-size: 0.9rem;
+        }
+        .phase-drawer .drawer-header .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            min-height: 30px;
+            padding: 0 8px;
+        }
+        .phase-drawer .phase-main-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+        .phase-drawer .phase-main-btn {
+            padding: 4px 10px;
+            border: 1px solid var(--accent-dark);
+            border-radius: 16px;
+            background: #000;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
+            min-height: 28px;
+            flex: 1 0 auto;
+            text-align: center;
+        }
+        .phase-drawer .phase-main-btn.active {
+            background: var(--accent-dark);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .phase-drawer .phase-sub-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 4px 0;
+            border-top: 1px solid var(--accent-dark);
+            border-bottom: 1px solid var(--accent-dark);
+            margin-bottom: 6px;
+        }
+        .phase-drawer .phase-sub-btn {
+            padding: 3px 8px;
+            border: 1px solid #333;
+            border-radius: 14px;
+            background: #0a0a0a;
+            color: var(--text-muted);
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: 0.2s;
+            min-height: 24px;
+            opacity: 0.5;
+        }
+        .phase-drawer .phase-sub-btn.active {
+            background: var(--accent-dark);
+            border-color: var(--accent);
+            color: #fff;
+            opacity: 1;
+        }
+        .phase-drawer .phase-nav {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .phase-drawer .phase-nav button {
+            min-height: 30px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            background: #1a0a0a;
+            border-color: var(--accent-dark);
+        }
+        .phase-drawer .phase-nav .turn-btn {
+            background: var(--accent-dark);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .phase-drawer .turn-counter {
+            color: var(--gold);
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        ::-webkit-scrollbar { width: 3px; height: 3px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--accent-dark); }
+
+        /* FALLBACK */
+        #fallback-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-color); z-index: 999; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .file-upload-box { background: var(--panel-bg); border: 1px solid var(--accent); padding: 20px; border-radius: 8px; margin-top: 15px; width: 100%; max-width: 400px; text-align: left; }
+        .file-upload-box label { display: block; margin: 10px 0 5px; font-size: 0.8rem; color: var(--text-muted); }
+
+        @media (max-width: 480px) {
+            body { padding: 4px; padding-bottom: 70px; }
+            .panel { padding: 6px; }
+            h1 { font-size: 0.9rem; }
+            h2 { font-size: 0.75rem; }
+            .compact-life button { font-size: 0.7rem; padding: 6px 0; min-height: 32px; }
+            .life-val { font-size: 2.2rem; min-width: 40px; }
+            .cmdr-track .count { font-size: 1.2rem; }
+            .cmdr-track .cost-box { font-size: 0.7rem; padding: 2px 6px; }
+            .card-title-ui { font-size: 0.65rem; }
+            .card-img-thumb { width: 22px; height: 22px; }
+            .controls-actions button { font-size: 0.55rem; min-height: 20px; padding: 2px 3px; }
+            .counter-inputs input { font-size: 0.55rem; min-height: 20px; }
+            .counter-inputs button { font-size: 0.55rem; min-height: 20px; }
+            .cnt-tag { font-size: 0.5rem; padding: 2px 4px; }
+            .cnt-tag button { min-height: 14px; min-width: 14px; font-size: 0.5rem; }
+            .global-item { font-size: 0.7rem; padding: 4px 6px; }
+            .zone-section .zone-header .zone-title { font-size: 0.7rem; }
+            .zone-section .zone-header .zone-count { font-size: 0.9rem; }
+            .command-zone-card .cmd-img { width: 30px; height: 30px; }
+            .command-zone-card .cmd-info .cmd-name { font-size: 0.7rem; }
+            .phase-fab { width: 48px; height: 48px; font-size: 1rem; bottom: 12px; right: 12px; }
+            .phase-drawer { padding: 8px; }
+            .phase-drawer .phase-main-btn { font-size: 0.6rem; padding: 3px 6px; min-height: 24px; }
+            .phase-drawer .phase-sub-btn { font-size: 0.5rem; padding: 2px 6px; min-height: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- MODAL -->
+<div class="modal" id="imgModal" onclick="closeModal()">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <img id="modalImg" src="" alt="Carta ampliada">
+    </div>
+</div>
+
+<!-- FALLBACK UPLOAD -->
+<div id="fallback-screen">
+    <h2>Bloqueio de Segurança Detectado</h2>
+    <p style="font-size: 0.8rem; color: var(--text-muted);">O navegador bloqueou o carregamento automático dos JSONs locais.</p>
+    <div class="file-upload-box">
+        <label>Selecione o arquivo deck.json:</label>
+        <input type="file" id="file-deck" accept=".json">
+        <label>Selecione o arquivo habilidades.json:</label>
+        <input type="file" id="file-hab" accept=".json">
+        <label>Selecione o arquivo CartasHabilidades.json:</label>
+        <input type="file" id="file-cardhab" accept=".json">
+        <button onclick="manualLoadFiles()" style="width: 100%; margin-top: 15px;">Carregar e Iniciar</button>
+    </div>
+</div>
+
+<div class="container" id="main-app" style="display: none;">
+
+    <div class="header-row">
+        <h1>The Prismatic Terror</h1>
+        <button class="reset-btn" onclick="resetAll()">Resetar</button>
+    </div>
+
+    <!-- GLOBAL EFFECTS -->
+    <section class="panel global-panel">
+        <h2>⚡ Efeitos Globais Ativos</h2>
+        <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+            <input type="text" id="global-input" placeholder="Ex: Todas as criaturas têm ímpeto..." style="min-height: 30px; font-size:0.7rem;">
+            <button onclick="addGlobalEffect()" style="min-height: 30px; padding: 4px 10px; font-size:0.7rem;">Adicionar</button>
+        </div>
+        <div class="global-list" id="global-container"></div>
+        <div style="font-size:0.6rem; color:var(--text-muted); margin-top: 3px;">Efeitos automáticos de cartas em campo aparecem aqui.</div>
+    </section>
+
+    <!-- LIFE -->
+    <section class="panel">
+        <h2>Pontos de Vida</h2>
+        <div class="compact-life">
+            <button onclick="modLife(-10)">-10</button>
+            <button onclick="modLife(-5)">-5</button>
+            <button onclick="modLife(-1)">-1</button>
+            <div class="life-val" id="life-val">40</div>
+            <button onclick="modLife(1)">+1</button>
+            <button onclick="modLife(5)">+5</button>
+            <button onclick="modLife(10)">+10</button>
+        </div>
+    </section>
+
+    <!-- COMMANDER TRACKER -->
+    <section class="panel">
+        <h2>Comandante (Esika)</h2>
+        <div class="cmdr-track">
+            <div style="display: flex; flex-direction: column;">
+                <div>
+                    <span class="label">Baixado:</span>
+                    <span class="count" id="cmdr-cast-count">0</span>
+                </div>
+                <div>
+                    <div>
+                        <span class="label">Custo Frente:</span>
+                        <span class="cost-box" id="cmdr-front-cost">{1}{G}{G}</span>
+                    </div>
+                    <div>
+                        <span class="label">Custo Verso:</span>
+                        <span class="cost-box" id="cmdr-back-cost">{W}{U}{B}{R}{G}</span>
+                    </div>
+                </div>
+                <div>
+                    <span class="label">Taxa:</span>
+                    <span class="cost-box" id="cmdr-tax">{0}</span>
+                </div>
+            </div>
+            <div>
+                <button onclick="castCommander()">+ Baixar</button>
+                <button onclick="resetCommander()" style="background:#333; border-color:#666; padding: 2px 10px;">Resetar</button>
+            </div>
+        </div>
+        <div style="text-align:center; font-size:0.6rem; color:var(--text-muted); margin-top:3px;">
+            Custo atual = custo base + {2} por cada vez que já foi conjurado.
+        </div>
+    </section>
+
+    <!-- COMMANDER DAMAGE -->
+    <section class="panel">
+        <h2>Dano de Comandante (Recebido)</h2>
+        <div id="cmdr-container"></div>
+        <button class="btn-add-cmdr" onclick="addCmdr()">+ Adicionar Comandante Inimigo</button>
+    </section>
+
+    <!-- ZONAS (incluindo a Zona de Comando) -->
+    <section class="panel">
+        <h2>Zonas</h2>
+        
+        <!-- Zona de Comando (especial) -->
+        <div class="zone-section" style="border-color: var(--gold);">
+            <div class="zone-header">
+                <span class="zone-title" style="color: var(--gold);">👑 Zona de Comando</span>
+                <span class="zone-count" style="border-color: var(--gold); color: var(--gold);" id="zone-command-count">0</span>
+            </div>
+            <div id="zone-command-cards">
+                <!-- Renderizado via JS -->
+            </div>
+        </div>
+
+        <!-- Grimório -->
+        <div class="zone-section" id="zone-deck-section">
+            <div class="zone-header">
+                <span class="zone-title">📜 Grimório</span>
+                <span class="zone-count" id="zone-deck-count">0</span>
+            </div>
+            <input type="text" class="search-bar-zone" id="search-deck" placeholder="Buscar no grimório..." onkeyup="renderZones()">
+            <div class="zone-cards" id="zone-deck-cards"></div>
+        </div>
+
+        <!-- Campo -->
+        <div class="zone-section" id="zone-campo-section">
+            <div class="zone-header">
+                <span class="zone-title">⚔️ Campo</span>
+                <span class="zone-count" id="zone-campo-count" style="color: var(--accent);">0</span>
+            </div>
+            <input type="text" class="search-bar-zone" id="search-campo" placeholder="Buscar no campo..." onkeyup="renderZones()">
+            <div class="zone-cards" id="zone-campo-cards"></div>
+        </div>
+
+        <!-- Cemitério -->
+        <div class="zone-section" id="zone-cemiterio-section">
+            <div class="zone-header">
+                <span class="zone-title">💀 Cemitério</span>
+                <span class="zone-count" id="zone-cemiterio-count">0</span>
+            </div>
+            <input type="text" class="search-bar-zone" id="search-cemiterio" placeholder="Buscar no cemitério..." onkeyup="renderZones()">
+            <div class="zone-cards" id="zone-cemiterio-cards"></div>
+        </div>
+
+        <!-- Exílio -->
+        <div class="zone-section" id="zone-exilio-section">
+            <div class="zone-header">
+                <span class="zone-title">🌀 Exílio</span>
+                <span class="zone-count" id="zone-exilio-count">0</span>
+            </div>
+            <input type="text" class="search-bar-zone" id="search-exilio" placeholder="Buscar no exílio..." onkeyup="renderZones()">
+            <div class="zone-cards" id="zone-exilio-cards"></div>
+        </div>
+    </section>
+
+</div>
+
+<!-- BOTÃO FLUTUANTE DE FASES -->
+<div class="phase-fab" id="phaseFab" onclick="togglePhaseDrawer()">🔄 R0</div>
+
+<!-- PAINEL FLUTUANTE DE FASES -->
+<div class="phase-drawer" id="phaseDrawer">
+    <div class="drawer-header">
+        <span class="title">⏳ Fases do Turno</span>
+        <button class="close-btn" onclick="togglePhaseDrawer()">✕</button>
+    </div>
+    <div id="phase-drawer-content">
+        <!-- Renderizado via JS -->
+    </div>
+    <div class="turn-counter" id="turn-counter-drawer">Rodada 0</div>
+</div>
+
+<script>
+    // ============================================================
+    // DADOS GLOBAIS
+    // ============================================================
+    let deckData = null;
+    let abilitiesList = [];
+    let cardHabMap = {};
+    let commanderManaCostFront = "{1}{G}{G}";
+    let commanderManaCostBack = "{W}{U}{B}{R}{G}";
+
+    const phaseStructure = {
+        "Beginning": ["Untap", "Upkeep", "Draw"],
+        "Main 1": ["Post draw", "Main", "Pre Combat"],
+        "Combat": ["Beginning of combat", "Declare Attack", "Declare Block", "Damage 1 (initiative)", "Damage 2 (Normal)", "Damage 3 (Last)", "End of combat"],
+        "Main 2": ["Post Combat", "Main", "Pre End"],
+        "End": ["End", "Cleanup"]
+    };
+    const phaseNames = Object.keys(phaseStructure);
+    const flatPhases = [];
+    let phaseIndexMap = {};
+    let flatIndex = 0;
+    phaseNames.forEach(mainPhase => {
+        const subs = phaseStructure[mainPhase];
+        subs.forEach(sub => {
+            flatPhases.push({ main: mainPhase, sub: sub });
+            phaseIndexMap[`${mainPhase}|${sub}`] = flatIndex++;
+        });
+    });
+
+    const COMMANDER_NAME = "Esika God of the Tree";
+
+    let state = {
+        life: 40,
+        phase: 0,
+        turn: 0,
+        commanders: [],
+        globalEffects: [],
+        cards: [],
+        commanderCastCount: 0
+    };
+
+    // ============================================================
+    // UTILITÁRIOS: NORMALIZAÇÃO DE NOMES
+    // ============================================================
+    function normalizeName(name) {
+        return name.replace(/[^a-zA-Z0-9\s]/g, '').trim().toLowerCase();
+    }
+
+    // ============================================================
+    // INICIALIZAÇÃO
+    // ============================================================
+    window.onload = async () => {
+        try {
+            const resDeck = await fetch('./deck.json');
+            const resHab = await fetch('./habilidades.json');
+            const resCardHab = await fetch('./CartasHabilidades.json');
+            if (!resDeck.ok || !resHab.ok || !resCardHab.ok) throw new Error("Fetch failed");
+
+            deckData = await resDeck.json();
+            const habData = await resHab.json();
+            abilitiesList = habData.habilidades ? habData.habilidades.sort() : [];
+            cardHabMap = await resCardHab.json();
+
+            // Extrair custos de mana do comandante
+            if (deckData.entries && deckData.entries.commanders) {
+                const cmdEntry = deckData.entries.commanders.find(entry =>
+                    entry.card_digest && entry.card_digest.name === COMMANDER_NAME
+                );
+                if (cmdEntry && cmdEntry.card_digest) {
+                    const manaCost = cmdEntry.card_digest.mana_cost || "";
+                    if (manaCost.includes("//")) {
+                        const parts = manaCost.split("//").map(s => s.trim());
+                        commanderManaCostFront = parts[0] || "{1}{G}{G}";
+                        commanderManaCostBack = parts[1] || "{W}{U}{B}{R}{G}";
+                    } else {
+                        commanderManaCostFront = manaCost || "{1}{G}{G}";
+                        commanderManaCostBack = "";
+                    }
+                }
+            }
+
+            processDeckData();
+            initApp();
+        } catch (e) {
+            document.getElementById('fallback-screen').style.display = 'flex';
+        }
+    };
+
+    function manualLoadFiles() {
+        const fileDeck = document.getElementById('file-deck').files[0];
+        const fileHab = document.getElementById('file-hab').files[0];
+        const fileCardHab = document.getElementById('file-cardhab').files[0];
+        if(!fileDeck || !fileHab || !fileCardHab) return alert("Selecione todos os três arquivos.");
+
+        const readerDeck = new FileReader();
+        readerDeck.onload = (e) => {
+            deckData = JSON.parse(e.target.result);
+            const readerHab = new FileReader();
+            readerHab.onload = (e2) => {
+                const habData = JSON.parse(e2.target.result);
+                abilitiesList = habData.habilidades ? habData.habilidades.sort() : [];
+                const readerCardHab = new FileReader();
+                readerCardHab.onload = (e3) => {
+                    cardHabMap = JSON.parse(e3.target.result);
+                    if (deckData.entries && deckData.entries.commanders) {
+                        const cmdEntry = deckData.entries.commanders.find(entry =>
+                            entry.card_digest && entry.card_digest.name === COMMANDER_NAME
+                        );
+                        if (cmdEntry && cmdEntry.card_digest) {
+                            const manaCost = cmdEntry.card_digest.mana_cost || "";
+                            if (manaCost.includes("//")) {
+                                const parts = manaCost.split("//").map(s => s.trim());
+                                commanderManaCostFront = parts[0] || "{1}{G}{G}";
+                                commanderManaCostBack = parts[1] || "{W}{U}{B}{R}{G}";
+                            } else {
+                                commanderManaCostFront = manaCost || "{1}{G}{G}";
+                                commanderManaCostBack = "";
+                            }
+                        }
+                    }
+                    processDeckData();
+                    document.getElementById('fallback-screen').style.display = 'none';
+                    initApp();
+                };
+                readerCardHab.readAsText(fileCardHab);
+            };
+            readerHab.readAsText(fileHab);
+        };
+        readerDeck.readAsText(fileDeck);
+    }
+
+    // ============================================================
+    // PROCESSAMENTO DO DECK (INCLUI A ESIKA NA ZONA DE COMANDO)
+    // ============================================================
+    function processDeckData() {
+        state.cards = [];
+        let uid = 0;
+        const entries = deckData.entries || {};
+        const sections = ['commanders', 'lands', 'nonlands'];
+        let foundCommander = false;
+
+        sections.forEach(sec => {
+            if (entries[sec]) {
+                entries[sec].forEach(card => {
+                    let name = card.card_digest?.name || card.raw_text || "Carta Desconhecida";
+                    let img = card.card_digest?.image_uris?.front || "";
+                    let entryId = card.id || "unknown";
+
+                    const cleanName = name.replace(/[^a-zA-Z0-9\s]/g, '').trim();
+                    let displayName = cleanName;
+                    if (displayName === "Carta Desconhecida" || displayName === "") {
+                        displayName = `[${entryId}]`;
+                    }
+
+                    const count = card.count || 1;
+                    for(let i=0; i<count; i++) {
+                        // Se for a Esika, coloca na zona de comando e marca como encontrada
+                        if (cleanName.toLowerCase().includes(COMMANDER_NAME.toLowerCase())){
+                            if (!foundCommander) {
+                                state.cards.push({
+                                    uid: uid++,
+                                    name: displayName,
+                                    cleanName: cleanName,
+                                    img: img,
+                                    zone: 'command',
+                                    counters: [],
+                                    isCommander: true
+                                });
+                                foundCommander = true;
+                            }
+                            return;
+                        }
+                        state.cards.push({
+                            uid: uid++,
+                            name: displayName,
+                            cleanName: cleanName,
+                            img: img,
+                            zone: 'deck',
+                            counters: []
+                        });
+                    }
+                });
+            }
+        });
+
+        state.cards.sort((a,b) => a.name.localeCompare(b.name));
+    }
+
+    // ============================================================
+    // INICIALIZAR UI
+    // ============================================================
+    function initApp() {
+        document.getElementById('main-app').style.display = 'flex';
+        renderAll();
+    }
+
+    function renderAll() {
+        renderLife();
+        renderPhaseFab();
+        renderPhaseDrawer();
+        renderCommanders();
+        renderGlobals();
+        renderCommanderTracker();
+        renderZones();
+    }
+
+    // ============================================================
+    // RESET
+    // ============================================================
+    function resetAll() {
+        if(!confirm("Tem certeza que deseja resetar a partida?")) return;
+        state.life = 40;
+        state.phase = 0;
+        state.turn = 0;
+        state.commanders = [];
+        state.globalEffects = [];
+        state.commanderCastCount = 0;
+        state.cards.forEach(c => {
+            if (c.isCommander) {
+                c.zone = 'command';
+            } else {
+                c.zone = 'deck';
+            }
+            c.counters = [];
+        });
+        renderAll();
+    }
+
+    // ============================================================
+    // LIFE
+    // ============================================================
+    function modLife(val) {
+        state.life += val;
+        renderLife();
+    }
+    function renderLife() {
+        const el = document.getElementById('life-val');
+        el.innerText = state.life;
+        el.style.color = state.life <= 10 ? '#8a0b0b' : 'var(--life-color)';
+    }
+
+    // ============================================================
+    // PHASE DRAWER + FAB
+    // ============================================================
+    function renderPhaseFab() {
+        document.getElementById('phaseFab').innerHTML = `🔄 R${state.turn}`;
+    }
+
+    function togglePhaseDrawer() {
+        const drawer = document.getElementById('phaseDrawer');
+        if (drawer.classList.contains('open')) {
+            drawer.classList.remove('open');
+        } else {
+            drawer.classList.add('open');
+            renderPhaseDrawer();
+        }
+    }
+
+    function renderPhaseDrawer() {
+        const container = document.getElementById('phase-drawer-content');
+        const current = flatPhases[state.phase];
+        const currentMain = current ? current.main : 'Beginning';
+
+        let html = '';
+
+        // Fases principais
+        html += `<div class="phase-main-row">`;
+        phaseNames.forEach(main => {
+            const active = (main === currentMain) ? 'active' : '';
+            html += `<button class="phase-main-btn ${active}" onclick="setMainPhase('${main}')">${main}</button>`;
+        });
+        html += `</div>`;
+
+        // Subfases
+        const subs = phaseStructure[currentMain] || [];
+        html += `<div class="phase-sub-row">`;
+        subs.forEach(sub => {
+            const isActive = (current && current.main === currentMain && current.sub === sub);
+            html += `<button class="phase-sub-btn ${isActive ? 'active' : ''}" onclick="setSubPhase('${currentMain}', '${sub}')">${sub}</button>`;
+        });
+        html += `</div>`;
+
+        // Navegação + botão Novo Turno (se Cleanup)
+        const isCleanup = (current && current.main === 'End' && current.sub === 'Cleanup');
+        html += `<div class="phase-nav">`;
+        html += `<button onclick="prevPhase()">◀</button>`;
+        if (isCleanup) {
+            html += `<button class="turn-btn" onclick="nextTurn()">🔄 Iniciar Novo Turno</button>`;
+        } else {
+            html += `<button onclick="nextPhase()">Próximo ▶</button>`;
+        }
+        html += `</div>`;
+
+        container.innerHTML = html;
+        document.getElementById('turn-counter-drawer').innerText = `Rodada ${state.turn}`;
+        renderPhaseFab();
+    }
+
+    function setMainPhase(main) {
+        const subs = phaseStructure[main];
+        if (subs && subs.length > 0) {
+            const key = `${main}|${subs[0]}`;
+            state.phase = phaseIndexMap[key] || 0;
+            renderPhaseDrawer();
+        }
+    }
+
+    function setSubPhase(main, sub) {
+        const key = `${main}|${sub}`;
+        if (phaseIndexMap[key] !== undefined) {
+            state.phase = phaseIndexMap[key];
+            renderPhaseDrawer();
+        }
+    }
+
+    function nextPhase() {
+        state.phase = (state.phase + 1) % flatPhases.length;
+        renderPhaseDrawer();
+    }
+
+    function prevPhase() {
+        state.phase = (state.phase - 1 + flatPhases.length) % flatPhases.length;
+        renderPhaseDrawer();
+    }
+
+    function nextTurn() {
+        state.turn++;
+        state.phase = phaseIndexMap['Beginning|Untap'] || 0;
+        renderPhaseDrawer();
+        renderPhaseFab();
+    }
+
+    // ============================================================
+    // GLOBAL EFFECTS (AGORA COM AGRUPAMENTO)
+    // ============================================================
+    function addGlobalEffect(text, source = 'manual') {
+        if(!text) {
+            text = document.getElementById('global-input').value.trim();
+            if(!text) return;
+            document.getElementById('global-input').value = '';
+        }
+        if(!state.globalEffects.some(e => e.text === text && e.source === source)) {
+            state.globalEffects.push({ text, source });
+            renderGlobals();
+        }
+    }
+
+    function removeGlobalEffect(text, source) {
+        // Remove o efeito com a fonte específica
+        state.globalEffects = state.globalEffects.filter(e => !(e.text === text && e.source === source));
+        renderGlobals();
+    }
+
+    function renderGlobals() {
+        const cont = document.getElementById('global-container');
+        if (state.globalEffects.length === 0) {
+            cont.innerHTML = `<div style="color:var(--text-muted); font-size:0.7rem;">Nenhum efeito global ativo.</div>`;
+            return;
+        }
+
+        // Agrupar por texto do efeito
+        const groups = {};
+        state.globalEffects.forEach(eff => {
+            if (!groups[eff.text]) {
+                groups[eff.text] = [];
+            }
+            groups[eff.text].push(eff.source);
+        });
+
+        let html = '';
+        for (const [text, sources] of Object.entries(groups)) {
+            const uniqueSources = [...new Set(sources)]; // evita duplicatas da mesma carta
+            const sourceDisplay = uniqueSources.length === 1
+                ? `[${uniqueSources[0]}]`
+                : `[Multiple (${uniqueSources.length})]`;
+
+            // Para remover, precisamos remover todas as fontes deste efeito
+            // Ou podemos permitir remover uma fonte específica? Vou remover uma fonte específica.
+            // Para manter a interface limpa, vou permitir remover o efeito como um todo (todas as fontes)
+            // Ou então remover a primeira fonte? Para simplificar, vou adicionar um botão que remove todas as fontes deste efeito.
+            // Mas pode ser melhor remover uma fonte específica. Vou criar um botão que remove a fonte específica.
+            // Porém, na interface agrupada, não temos a fonte específica. Vou criar um botão que remove todas as fontes deste efeito.
+            // Para ser mais preciso, vou criar um botão "Remover" que remove todas as fontes deste efeito (ou a primeira fonte).
+            // Vou optar por remover todas as fontes (o que faz sentido se o efeito está ativo e você quer desativá-lo).
+            // Mas se houver múltiplas fontes, pode ser melhor remover apenas uma. Vou fazer um botão que remove uma fonte específica, mas vou exibir a lista de fontes como texto.
+            // Vou exibir as fontes como texto, e ao clicar no X, remover a primeira fonte? Vou fazer um botão que remove todas as fontes.
+            // Para isso, vou criar um botão que chama uma função para remover todas as fontes daquele texto.
+            // Mas o usuário pode querer remover apenas uma carta. Então vou exibir as fontes como um tooltip ou texto pequeno.
+            // Vou criar um botão "X" que remove todas as fontes (já que é mais fácil).
+            // Mas se o efeito for ativado por 2 cartas, e uma delas sair, o efeito deve continuar.
+            // O comportamento correto é remover apenas a fonte que saiu, mas com o agrupamento não sabemos qual fonte o usuário quer remover.
+            // Vou fazer o seguinte: ao clicar no X, removo a primeira fonte da lista. Se houver mais de uma fonte, o efeito continua.
+            // Para isso, preciso saber quais fontes estão nesse grupo. Vou armazenar.
+            // Como cada fonte pode ser removida individualmente, vou criar um botão "Remover" que pergunta qual fonte remover? Muito complexo.
+            // Solução: manter o agrupamento visual, mas permitir remover uma fonte específica através de um clique na fonte? Não.
+            // Vou criar um botão de remoção que remove todas as fontes do grupo (já que é o comportamento mais comum para desativar um efeito global).
+            // Se o usuário quiser remover apenas uma carta, ele pode remover a carta do campo.
+            // Portanto, vou adicionar um botão "X" que remove todas as fontes daquele efeito.
+            // Mas isso pode ser indesejado. Então vou criar um botão que remove uma fonte específica, e exibir as fontes como texto.
+            // Vou exibir a lista de fontes, e ao lado de cada fonte, um X que remove apenas aquela fonte.
+            // Isso fica melhor.
+
+            // Vou construir uma string de fontes com links para remoção individual.
+            let sourcesHtml = uniqueSources.map(src => {
+                // Escapar aspas para evitar problemas no onclick
+                const escapedSrc = src.replace(/'/g, "\\'");
+                return `<span style="cursor:pointer; text-decoration:underline; margin-right:4px;" onclick="removeGlobalEffect('${text}', '${escapedSrc}')">${src}</span>`;
+            }).join(', ');
+
+            // Monta o item
+            html += `
+                <div class="global-item">
+                    <span>
+                        <span class="source">[${uniqueSources.length === 1 ? uniqueSources[0] : `Multiple (${uniqueSources.length})`}]</span>
+                        ${text.toUpperCase()}
+                        <span style="font-size:0.6rem; color:#aaa; margin-left:6px;">(${sourcesHtml})</span>
+                    </span>
+                    <span class="remove-btn" onclick="removeAllSourcesOfEffect('${text}')">✕</span>
+                </div>
+            `;
+        }
+
+        cont.innerHTML = html;
+    }
+
+    // Função para remover todas as fontes de um efeito (desativar completamente)
+    function removeAllSourcesOfEffect(text) {
+        state.globalEffects = state.globalEffects.filter(e => e.text !== text);
+        renderGlobals();
+    }
+
+    // ============================================================
+    // COMMANDER TRACKER
+    // ============================================================
+    function renderCommanderTracker() {
+        document.getElementById('cmdr-cast-count').innerText = state.commanderCastCount;
+        const tax = state.commanderCastCount * 2;
+        document.getElementById('cmdr-front-cost').innerHTML = `${commanderManaCostFront} <span class="tax">+{${tax}}</span>`;
+        if (commanderManaCostBack) {
+            document.getElementById('cmdr-back-cost').innerHTML = `${commanderManaCostBack} <span class="tax">+{${tax}}</span>`;
+        } else {
+            document.getElementById('cmdr-back-cost').innerHTML = '—';
+        }
+        document.getElementById('cmdr-tax').innerHTML = `{${tax}}`;
+    }
+
+    // ============================================================
+    // COMANDANTE: BAIXAR
+    // ============================================================
+    function castCommander() {
+        const commander = state.cards.find(c => c.isCommander);
+        if (!commander) {
+            alert('Comandante não encontrado!');
+            return;
+        }
+        if (commander.zone === 'command') {
+            commander.zone = 'campo';
+            state.commanderCastCount++;
+            renderCommanderTracker();
+            renderZones();
+            renderPhaseFab();
+        } else if (commander.zone === 'campo') {
+            alert('O comandante já está em campo.');
+        } else {
+            alert('O comandante não está na zona de comando. Mova-o de volta para a zona de comando primeiro.');
+        }
+    }
+
+    function resetCommander() {
+        state.commanderCastCount = 0;
+        const commander = state.cards.find(c => c.isCommander);
+        if (commander) {
+            commander.zone = 'command';
+            commander.counters = [];
+        }
+        renderCommanderTracker();
+        renderZones();
+    }
+
+    // ============================================================
+    // COMMANDER DAMAGE
+    // ============================================================
+    function addCmdr() { state.commanders.push({ id: Date.now(), name: "Novo Oponente", dmg: 0 }); renderCommanders(); }
+    function modCmdr(id, val) {
+        let c = state.commanders.find(x => x.id === id);
+        if(c && c.dmg + val >= 0) {
+            c.dmg += val;
+            modLife(-val);
+            renderCommanders();
+            if(c.dmg >= 21) alert(`Cuidado! 21 de dano de comandante de ${c.name}!`);
+        }
+    }
+    function updateCmdrName(id, val) { let c = state.commanders.find(x => x.id === id); if(c) c.name = val; }
+    function renderCommanders() {
+        document.getElementById('cmdr-container').innerHTML = state.commanders.map(c => `
+            <div class="cmdr-row">
+                <input type="text" value="${c.name}" onchange="updateCmdrName(${c.id}, this.value)">
+                <button onclick="modCmdr(${c.id}, -1)" style="min-height: 28px; padding: 2px 8px;">-</button>
+                <span class="cmdr-val">${c.dmg}</span>
+                <button onclick="modCmdr(${c.id}, 1)" style="min-height: 28px; padding: 2px 8px;">+</button>
+            </div>
+        `).join('');
+    }
+
+    // ============================================================
+    // COUNTERS
+    // ============================================================
+    function addCounter(uid) {
+        const card = state.cards.find(c => c.uid === uid);
+        if (!card) return;
+
+        const nameInput = document.getElementById(`cnt-name-${uid}`);
+        const countInput = document.getElementById(`cnt-count-${uid}`);
+        const name = nameInput.value.trim();
+        let count = parseInt(countInput.value, 10) || 1;
+        if (!name) return;
+
+        const existing = card.counters.find(c => c.name === name);
+        if (existing) {
+            existing.count += count;
+        } else {
+            card.counters.push({ name, count });
+        }
+        nameInput.value = '';
+        countInput.value = '1';
+        renderZones();
+    }
+
+    function modCounter(uid, name, delta) {
+        const card = state.cards.find(c => c.uid === uid);
+        if (!card) return;
+        const counter = card.counters.find(c => c.name === name);
+        if (!counter) return;
+        counter.count = Math.max(0, counter.count + delta);
+        if (counter.count === 0) {
+            card.counters = card.counters.filter(c => c.name !== name);
+        }
+        renderZones();
+    }
+
+    function removeCounter(uid, name) {
+        const card = state.cards.find(c => c.uid === uid);
+        if (!card) return;
+        card.counters = card.counters.filter(c => c.name !== name);
+        renderZones();
+    }
+
+    // ============================================================
+    // MODAL
+    // ============================================================
+    function openModal(imgUrl) {
+        if (!imgUrl) return;
+        document.getElementById('modalImg').src = imgUrl;
+        document.getElementById('imgModal').classList.add('active');
+    }
+    function closeModal() {
+        document.getElementById('imgModal').classList.remove('active');
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // ============================================================
+    // MOVIMENTAÇÃO DE ZONA
+    // ============================================================
+    function toggleField(uid) {
+        const card = state.cards.find(c => c.uid === uid);
+        if (!card) return;
+        if (card.isCommander) {
+            if (card.zone === 'command') {
+                card.zone = 'campo';
+                state.commanderCastCount++;
+                renderCommanderTracker();
+            } else {
+                if (card.zone === 'campo') {
+                    card.zone = 'command';
+                } else {
+                    card.zone = 'command';
+                }
+            }
+            renderZones();
+            return;
+        }
+
+        const oldZone = card.zone;
+        if (card.zone === 'deck') {
+            card.zone = 'campo';
+        } else {
+            card.zone = 'deck';
+        }
+        if (oldZone === 'campo') removeGlobalEffectsFromCard(card.cleanName);
+        if (card.zone === 'campo') activateGlobalEffects(card.cleanName);
+        renderZones();
+    }
+
+    function changeZone(uid, newZone, event) {
+        if (event) event.stopPropagation();
+        const card = state.cards.find(c => c.uid === uid);
+        if (!card) return;
+        const oldZone = card.zone;
+        card.zone = newZone;
+
+        if (card.isCommander && oldZone === 'command' && newZone === 'campo') {
+            state.commanderCastCount++;
+            renderCommanderTracker();
+        }
+
+        if (oldZone === 'campo' && newZone !== 'campo') {
+            removeGlobalEffectsFromCard(card.cleanName);
+        }
+        if (newZone === 'campo') {
+            activateGlobalEffects(card.cleanName);
+        }
+        renderZones();
+    }
+
+    function activateGlobalEffects(cardName) {
+        const normalized = normalizeName(cardName);
+        let entry = null;
+        if (cardHabMap.cards) {
+            for (const [key, value] of Object.entries(cardHabMap.cards)) {
+                if (normalizeName(key) === normalized) {
+                    entry = value;
+                    break;
+                }
+            }
+        }
+        if (!entry || entry.scope === 'none' || entry.abilities.length === 0) return;
+        entry.abilities.forEach(ab => {
+            let desc = '';
+            if (entry.scope === 'all') desc = 'Todas as';
+            else if (entry.scope === 'all_except_self') desc = 'Outras';
+            else desc = '';
+            const aff = entry.affects === 'creatures' ? 'criaturas' : 'permanentes';
+            const text = `${desc} ${aff} têm ${ab}`.trim();
+            addGlobalEffect(text, cardName);
+        });
+    }
+
+    function removeGlobalEffectsFromCard(cardName) {
+        state.globalEffects = state.globalEffects.filter(e => e.source !== cardName);
+        renderGlobals();
+    }
+
+    // ============================================================
+    // RENDER ZONAS
+    // ============================================================
+    function renderZones() {
+        // Zona de comando
+        const commandCards = state.cards.filter(c => c.zone === 'command');
+        document.getElementById('zone-command-count').innerText = commandCards.length;
+        const commandContainer = document.getElementById('zone-command-cards');
+        if (commandCards.length === 0) {
+            commandContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.65rem; padding:4px 0;">Nenhuma carta na zona de comando.</div>`;
+        } else {
+            commandContainer.innerHTML = commandCards.map(c => renderCardHTML(c, 'command')).join('');
+        }
+
+        const zones = ['deck', 'campo', 'cemiterio', 'exilio'];
+        const searchIds = {
+            deck: 'search-deck',
+            campo: 'search-campo',
+            cemiterio: 'search-cemiterio',
+            exilio: 'search-exilio'
+        };
+        const containerIds = {
+            deck: 'zone-deck-cards',
+            campo: 'zone-campo-cards',
+            cemiterio: 'zone-cemiterio-cards',
+            exilio: 'zone-exilio-cards'
+        };
+        const countIds = {
+            deck: 'zone-deck-count',
+            campo: 'zone-campo-count',
+            cemiterio: 'zone-cemiterio-count',
+            exilio: 'zone-exilio-count'
+        };
+
+        zones.forEach(zone => {
+            const query = document.getElementById(searchIds[zone]).value.toLowerCase();
+            const cardsInZone = state.cards.filter(c => c.zone === zone);
+            const filtered = cardsInZone.filter(c => {
+                if (zone === 'deck' && c.isCommander) return false;
+                return (c.cleanName || c.name).toLowerCase().includes(query);
+            });
+
+            document.getElementById(countIds[zone]).innerText = cardsInZone.length;
+
+            const container = document.getElementById(containerIds[zone]);
+            if (filtered.length === 0) {
+                container.innerHTML = `<div style="color:var(--text-muted); font-size:0.65rem; padding:4px 0;">Nenhuma carta.</div>`;
+                return;
+            }
+            container.innerHTML = filtered.map(c => renderCardHTML(c, zone)).join('');
+        });
+    }
+
+    function renderCardHTML(card, zone) {
+        const habOptions = `<option value="">Escolher do JSON...</option>` +
+            abilitiesList.map(h => `<option value="${h}">${h.toUpperCase()}</option>`).join('');
+
+        const countersHtml = card.counters.map(cnt => `
+            <div class="cnt-tag">
+                <span class="cnt-name">${cnt.name}</span>
+                <span class="cnt-qty">${cnt.count}</span>
+                <button onclick="modCounter(${card.uid}, '${cnt.name}', 1)">+</button>
+                <button onclick="modCounter(${card.uid}, '${cnt.name}', -1)">-</button>
+                <span onclick="removeCounter(${card.uid}, '${cnt.name}')" style="cursor:pointer; color:#ffaaaa;">✕</span>
+                <button class="btn-globalize" onclick="addGlobalEffect('${cnt.name} (${cnt.count})', '${card.name}')">🌐</button>
+            </div>
+        `).join('');
+
+        const zoomIcon = card.img ? `<span class="zoom-icon" onclick="event.stopPropagation(); openModal('${card.img}')">🔍</span>` : '';
+
+        const zoneButtons = `
+            ${zone !== 'command' ? `<button onclick="changeZone(${card.uid}, 'command', event)" style="background:#333; border-color:#666;">👑 Comando</button>` : ''}
+            ${zone !== 'campo' ? `<button onclick="changeZone(${card.uid}, 'campo', event)" style="background:#550000;">⚔ Campo</button>` : ''}
+            ${zone !== 'cemiterio' ? `<button onclick="changeZone(${card.uid}, 'cemiterio', event)" style="background:#330000;">💀 Cemitério</button>` : ''}
+            ${zone !== 'exilio' ? `<button onclick="changeZone(${card.uid}, 'exilio', event)" style="background:#222;">🌀 Exílio</button>` : ''}
+            ${zone !== 'deck' ? `<button onclick="changeZone(${card.uid}, 'deck', event)" style="background:#1a1a1a;">📜 Grimório</button>` : ''}
+        `;
+
+        const isCommandCard = card.isCommander && zone === 'command';
+        const extraClass = isCommandCard ? 'command' : zone;
+
+        return `
+            <div class="card-row ${extraClass}">
+                <div class="card-header-ui" onclick="toggleField(${card.uid})">
+                    <div class="card-img-thumb" style="background-image: url('${card.img}')" onclick="event.stopPropagation(); openModal('${card.img}')"></div>
+                    <div class="card-title-ui">${card.name} ${zoomIcon}</div>
+                </div>
+                <div class="card-controls">
+                    <div class="controls-actions">
+                        ${zoneButtons}
+                    </div>
+
+                    <div class="counter-inputs">
+                        <input type="text" id="cnt-name-${card.uid}" placeholder="Ex: +1/+1, Veneno...">
+                        <input type="number" id="cnt-count-${card.uid}" value="1" min="1" style="width:50px; flex:1;">
+                        <button onclick="addCounter(${card.uid})">Adicionar</button>
+                    </div>
+
+                    <div class="counters-tags">
+                        ${countersHtml}
+                        ${card.counters.length === 0 ? '<span style="color:var(--text-muted); font-size:0.6rem;">Nenhum marcador</span>' : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+</script>
+</body>
+</html>
