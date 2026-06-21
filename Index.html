@@ -550,7 +550,7 @@
     <!-- COMMANDER TRACKER -->
     <section class="panel">
         <h2>Comandante (Esika)</h2>
-        <div class="cmdr-track">
+        <div class="cmdr-track" style="flex-direction: column; gap: 8px;">
             <div style="display: flex; flex-direction: column;">
                 <div>
                     <span class="label">Baixado:</span>
@@ -822,7 +822,7 @@
                             if (!foundCommander) {
                                 state.cards.push({
                                     uid: uid++,
-                                    name: displayName,
+                                    name: name,
                                     cleanName: cleanName,
                                     img: img,
                                     zone: 'command',
@@ -835,7 +835,7 @@
                         }
                         state.cards.push({
                             uid: uid++,
-                            name: displayName,
+                            name: name,
                             cleanName: cleanName,
                             img: img,
                             zone: 'deck',
@@ -1150,7 +1150,8 @@
             c.dmg += val;
             modLife(-val);
             renderCommanders();
-            if(c.dmg >= 21) alert(`Cuidado! 21 de dano de comandante de ${c.name}!`);
+            if(c.dmg === 20) alert(`Cuidado! 20 de dano de comandante de ${c.name}!`);
+            else if  (c.dmg > 20) alert(`O comander ${c.name} já causou dano letal!`);
         }
     }
     function updateCmdrName(id, val) { let c = state.commanders.find(x => x.id === id); if(c) c.name = val; }
@@ -1280,7 +1281,7 @@
         let entry = null;
         if (cardHabMap.cards) {
             for (const [key, value] of Object.entries(cardHabMap.cards)) {
-                if (normalizeName(key) === normalized) {
+                if (normalizeName(key).toLowerCase().includes(normalized.toLowerCase())) {
                     entry = value;
                     break;
                 }
